@@ -1,0 +1,8 @@
+# Ignore artifacts:
+.prettierrc
+package-lock.json
+package.json
+webpack.config.js
+README.md
+dist/
+node_modules
