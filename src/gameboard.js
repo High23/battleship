@@ -50,4 +50,21 @@ export default class Gameboard {
         }
         return true;
     }
+
+    checkIfShipPlacementOverlapsAnyOtherShip(placementVertex) {
+        const shipKeys = Object.keys(this.ship)
+        if (shipKeys.length === 0) {
+            return false
+        }
+        for (let i = 0; i < shipKeys.length; i++) {
+            const shipPlacement = this.ship[[shipKeys[i]]][1]
+            for (let j = 0; j < shipPlacement.length; j++) {
+                if (placementVertex[0] === shipPlacement[j][0] && placementVertex[1] === shipPlacement[j][1]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }
