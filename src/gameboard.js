@@ -8,6 +8,24 @@ export default class Gameboard {
         this.missedShots = []
     }
 
+    receiveAttack(attackCoords) {
+        if (!this.xAxis.includes(attackCoords[0]) && !this.yAxis.includes(attackCoords[1]))
+            throw new Error('The attack coordinates are not within the gameboard')
+        const shipObjKeys = Object.keys(this.ship)
+        for (let i = 0; i < shipObjKeys.length; i++) {
+            const shipType = shipObjKeys[i]
+            const shipPlacement = this.ship[[shipType]][1]
+            for (let j = 0; j < shipPlacement.length; j++) {
+                if (shipPlacement[j][0] === attackCoords[0] && shipPlacement[j][1] === attackCoords[1]) {
+                    this.ship[[shipType]][0].hit()
+                    this.ship[[shipType]][0].isSunk()
+                    return;
+                }
+            }
+        }
+        this.missedShots.push(attackCoords)
+    }
+
     createShipsPlacement(coords, shipType, direction = 'vertical') {
         let shipObj;
         if (shipType === 'carrier') {
