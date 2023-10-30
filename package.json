@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "watch": "npx webpack --watch"
+    "watch": "npx webpack --watch",
+    "push": "git push origin main",
+    "gh-pages": "git subtree push --prefix dist origin gh-pages"
   },
   "keywords": [],
   "author": "High",
