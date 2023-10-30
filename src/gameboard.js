@@ -16,7 +16,11 @@ export default class Gameboard {
             const shipType = shipObjKeys[i]
             const shipPlacement = this.ship[[shipType]][1]
             for (let j = 0; j < shipPlacement.length; j++) {
-                if (shipPlacement[j][0] === attackCoords[0] && shipPlacement[j][1] === attackCoords[1]) {
+                if (this.missedShots.length > 0) {
+                    if (this.missedShots[j][0] === attackCoords[0] && this.missedShots[j][1] === attackCoords[1]) {
+                        return
+                    }
+                } else if (shipPlacement[j][0] === attackCoords[0] && shipPlacement[j][1] === attackCoords[1]) {
                     if (this.ship[[shipType]][0].sunk) return;
                     this.ship[[shipType]][0].hit()
                     this.ship[[shipType]][0].isSunk()
