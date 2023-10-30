@@ -85,4 +85,16 @@ export default class Gameboard {
         return false;
     }
 
+    checkIfAllShipsSunk() {
+        const keys = Object.keys(this.ship);
+        for (let i = 0; i < keys.length; i++) {
+            const shipType = keys[i];
+            const shipSunk = this.ship[[shipType]][0].sunk;
+            if (shipSunk === false) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
 }
