@@ -42,6 +42,7 @@ describe('test vertical placements of ships', () => {
     test('determine if an attack has hit or missed a ship', () => {
         gameboard.receiveAttack([1, 'A'])
         gameboard.receiveAttack([6, 'A'])
+        gameboard.receiveAttack([6, 'A'])
         expect(gameboard.ship.carrier[0].numOfTimesHit).toBe(1)
         expect(gameboard.missedShots.length).toBe(1) 
         expect(gameboard.missedShots[0]).toEqual([6, 'A'])
