@@ -35,7 +35,7 @@ html, body {
     justify-content: center;
 }
 
-.display {
+.display, .ship-type {
     text-align: center;
     padding: 15px;
     font-size: 1.3rem;
