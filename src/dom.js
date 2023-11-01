@@ -1,8 +1,11 @@
 import './style.css'
 
-export default function createBoards() {
+export {createPlayerBoard, createAiBoard}
+
+const yAxis = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
+
+function createPlayerBoard() {
     const gameboard = document.querySelector('.player-gameboard')
-    const yAxis = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
     for (let i = 1; i < 11; i++) {
         for (let j = 0; j < 10; j++) {
             const gameboardSquare = document.createElement('div')
@@ -11,7 +14,12 @@ export default function createBoards() {
             gameboard.appendChild(gameboardSquare)
         }
     }
-    const aiGameboard = document.querySelector('.ai-gameboard')
+}
+
+function createAiBoard() {
+    const gameboardContainer = document.querySelector('.gameboard-container')
+    const aiGameboard = document.createElement('div')
+    aiGameboard.classList.add('ai-gameboard')
     for (let i = 1; i < 11; i++) {
         for (let j = 0; j < 10; j++) {
             const gameboardSquare = document.createElement('div')
@@ -20,4 +28,5 @@ export default function createBoards() {
             aiGameboard.appendChild(gameboardSquare)
         }
     }
+    gameboardContainer.appendChild(aiGameboard)
 }
