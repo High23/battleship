@@ -7,14 +7,20 @@
         <script src="./main.js" type="module" defer></script>
     </head>
     <body>
-        <div id="container">
+        <div id="content">
             <div class="header">
                 <h1>Battle Ship</h1>
-                <a href="https://github.com/High23/battleship" target=”_blank”><img src="../src/icons/github-mark.svg" alt="github icon" class="github-icon"></a>
+                <a href="https://github.com/High23/battleship" target=”_blank”><img src="../src/icons/github-mark-white.svg" alt="github icon" class="github-icon"></a>
             </div>
-            <div class="gameboard-container">
-                <div class="player-gameboard"></div>
-                <div class="ai-gameboard"></div>
+            <div class="container">
+                <div class="btn-and-display">
+                    <span class="display">Place Your ships</span>
+                    <button type="button" class="rotate">Rotate Ship</button>
+                    <span class="ship-type">*Ship type*</span>
+                </div>
+                <div class="gameboard-container">
+                    <div class="player-gameboard"></div>
+                </div>
             </div>
         </div>
     </body>
