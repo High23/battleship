@@ -1,5 +1,6 @@
 import './ship'
 import './style.css'
-import createBoards from './dom'
+import { createAiBoard, createPlayerBoard } from './dom'
 
-createBoards()
+createPlayerBoard()
+// createAiBoard()
