@@ -72,8 +72,17 @@ html, body {
     flex-wrap: wrap;
 }
 
-.gameboard-square {
+.gameboard-square, .ai-gameboard-square {
     height: 35px;
     width: 35px;
     border: 1px solid white;
+    cursor: pointer;
+}
+
+.ship-placement {
+    background-color: green;
+}
+
+.gameboard-square:hover {
+    background-color: green;
 }
