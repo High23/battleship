@@ -44,8 +44,6 @@ function createAiBoard() {
     gameboardContainer.appendChild(aiGameboard)
 }
 
-
-
 function addListeners() {
     const gameboardSquares = document.querySelectorAll('.gameboard-square')
     gameboardSquares.forEach((square) => {
@@ -61,16 +59,32 @@ let placement = []
 function mouseHover() {
     hovered.push(this)
     let coords = this.dataset.squareVertex.split("")
+    const gameboardSquares = document.querySelectorAll('.gameboard-square')
+    let i = 0
+    if (shipDirection === 'vertical') {
+        while (i < gameboardSquares.length) {
+            if (gameboardSquares[i] === this) {
+                break;
+            }
+            i++
+        }
+    }
     let gameboardSquareElementSibling = this.nextSibling
     let siblingCoords;
-    for (let i = 1; i < shipLength; i++) {
-        if (gameboardSquareElementSibling) {
+    for (let j = 1; j < shipLength; j++) {
+        if (shipDirection === 'horizontal' && gameboardSquareElementSibling) {
             siblingCoords = gameboardSquareElementSibling.dataset.squareVertex.split("")
-        }
-        if (gameboardSquareElementSibling !== null && siblingCoords[siblingCoords.length - 1] === coords[coords.length - 1]) {
-            hovered.push(gameboardSquareElementSibling)
-            gameboardSquareElementSibling.classList.add('ship-placement')
-            gameboardSquareElementSibling = gameboardSquareElementSibling.nextSibling
+            if (siblingCoords[siblingCoords.length - 1] === coords[coords.length - 1]) {
+                hovered.push(gameboardSquareElementSibling)
+                gameboardSquareElementSibling.classList.add('ship-placement')
+                gameboardSquareElementSibling = gameboardSquareElementSibling.nextSibling
+            }
+        } else if (shipDirection === 'vertical') {
+            let verticalSiblingIndex = i + (10 * j)
+            if (verticalSiblingIndex < 100) {
+                hovered.push(gameboardSquares[verticalSiblingIndex])
+                gameboardSquares[verticalSiblingIndex].classList.add('ship-placement')
+            }
         }
     }
     placement = hovered
