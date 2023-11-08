@@ -1,7 +1,7 @@
 import { initShip, startGame, playerAttack } from './gameloop';
 import './style.css'
 
-export {createPlayerBoard, createAiBoard, addAiBoardListeners}
+export {createPlayerBoard, createAiBoard, addAiBoardListeners, markMissedShot, markHit, removeAiBoardListeners, announceWinner, adjustDisplay}
 
 const yAxis = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
 
@@ -38,7 +38,7 @@ function createAiBoard() {
         for (let j = 1; j < 11; j++) {
             const gameboardSquare = document.createElement('div')
             gameboardSquare.classList.add('ai-gameboard-square')
-            gameboardSquare.setAttribute('data-square-vertex', `${j} ${yAxis[i]}`)
+            gameboardSquare.setAttribute('data-square-vertex', `${j}${yAxis[i]}`)
             aiGameboard.appendChild(gameboardSquare)
         }
     }
@@ -107,9 +107,16 @@ displayShipName.innerHTML = shipName
 
 function mouseClick() {
     let coords = this.dataset.squareVertex.split("")
+    if (coords.length > 2) {
+        coords[0] = coords[0] + coords.splice(1, 1)[0]
+    }
     coords[0] = Number(coords[0])
-    if (initShip(coords, shipTypes[ship], shipDirection) === false) {
+    let shipPlacement = initShip(coords, shipTypes[ship], shipDirection)
+    if (shipPlacement === false) {
         alert("You can not have ships overlapping one another!")
+        return
+    } else if (shipPlacement === 'invalid') {
+        alert("You can not place the ship here")
         return
     }
     ship -= 1
@@ -125,8 +132,10 @@ function mouseClick() {
             displayShipName.innerHTML = shipName
     }
     placement.push(hovered)
+    showPlayerShips(placement[placement.length - 1])
     if (shipLength < 2) {
         removePlayerBoardListeners()
+        removeDisplay()
         startGame()
     }
 }
@@ -142,14 +151,108 @@ function removePlayerBoardListeners() {
 }
 
 function addAiBoardListeners() {
-    const gameboardSquares = document.querySelectorAll('.ai-gameboard-square')
-    gameboardSquares.forEach((square) => {
-        square.addEventListener('click', parseElementAttackCoord)
+    const aiGameboardSquares = document.querySelectorAll('.ai-gameboard-square')
+    aiGameboardSquares.forEach((aiSquare) => {
+        aiSquare.addEventListener('click', parseElementAttackCoord)
+        aiSquare.addEventListener('mouseover', addAiSquareColorOnHover)
+        aiSquare.addEventListener('mouseout', removeAiSquareColorOffHover)
+    });
+}
+
+function removeAiBoardListeners() {
+    const aiGameboardSquares = document.querySelectorAll('.ai-gameboard-square')
+    aiGameboardSquares.forEach((aiSquare) => {
+        aiSquare.removeEventListener('click', parseElementAttackCoord)
+        aiSquare.removeEventListener('mouseover', addAiSquareColorOnHover)
+        aiSquare.removeEventListener('mouseout', removeAiSquareColorOffHover)
     });
 }
 
 function parseElementAttackCoord() {
     let coords = this.dataset.squareVertex.split("")
+    if (coords.length > 2) {
+        coords[0] = coords[0] + coords.splice(1, 1)[0]
+    }
     coords[0] = Number(coords[0])
     playerAttack(coords)
+}
+
+function markMissedShot(missedShot, turn) {
+    let gameboardSquares;
+    if (turn === 'Player') {
+        gameboardSquares = document.querySelectorAll('.ai-gameboard-square')
+    } else {
+        gameboardSquares = document.querySelectorAll('.gameboard-square')
+    }
+    for (let i = 0; i < gameboardSquares.length; i++) {
+        let squareCoord = gameboardSquares[i].dataset.squareVertex.split("")
+        if (squareCoord.length > 2) {
+            squareCoord[0] = squareCoord[0] + squareCoord.splice(1, 1)[0]
+        }
+        squareCoord[0] = Number(squareCoord[0])
+        if (squareCoord[0] === missedShot[0] && squareCoord[1] === missedShot[1]) {
+            gameboardSquares[i].classList.add('missed')
+            gameboardSquares[i].classList.remove('hover-color')
+        }
+    }
+}
+
+function markHit(attackCoords, turn) {
+    let gameboardSquares;
+    if (turn === 'Player') {
+        gameboardSquares = document.querySelectorAll('.ai-gameboard-square')
+    } else {
+        gameboardSquares = document.querySelectorAll('.gameboard-square')
+    }
+    for (let i = 0; i < gameboardSquares.length; i++) {
+        let squareCoord = gameboardSquares[i].dataset.squareVertex.split("")
+        if (squareCoord.length > 2) {
+            squareCoord[0] = squareCoord[0] + squareCoord.splice(1, 1)[0]
+        }
+        squareCoord[0] = Number(squareCoord[0])
+        if (squareCoord[0] === attackCoords[0] && squareCoord[1] === attackCoords[1]) {
+            gameboardSquares[i].classList.add('hit')
+            gameboardSquares[i].classList.remove('hover-color')
+        }
+    }
+}
+
+function addAiSquareColorOnHover() {
+    if (this.classList[1] === 'missed' || this.classList[1] === 'hit') {
+        return
+    }
+    this.classList.add('hover-color')
+}
+
+function removeAiSquareColorOffHover() {
+    if (this.classList[1] === 'missed' || this.classList[1] === 'hit') {
+        return
+    }
+    this.classList.remove('hover-color')
+}
+
+function showPlayerShips(shipPlacement) {
+    removeSquareHighlights()
+    shipPlacement.forEach((element) => {
+        element.removeEventListener('mouseover', mouseHover)
+        element.removeEventListener('mouseout', removeSquareHighlights)
+        element.classList.add('ship-placement')
+    })
+}
+
+function announceWinner(winnerName) {
+    const display = document.querySelector('.display')
+    display.innerHTML = `The ${winnerName} is the winner!`
+}
+
+function removeDisplay() {
+    displayShipName.innerHTML = ''
+    rotateBTN.remove()
+    const display = document.querySelector('.display')
+    display.innerHTML = 'Attack'
+}
+
+function adjustDisplay(message) {
+    const display = document.querySelector('.display')
+    display.innerHTML = message
 }

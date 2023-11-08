@@ -12,8 +12,8 @@ describe('test horizontal placements of ships', () => {
         expect(gameboard.ship.carrier).toEqual([new Ship(5), [[1, 'A'], [2, 'A'], [3, 'A'], [4, 'A'], [5, 'A']]])
     });
 
-    test('createShipsPlacement should return undefined if the creation of a new ship horizontally overlaps another ship', () => {
-        expect(gameboard.createShipsPlacement([1, 'A'], 'battleship', 'horizontal')).toBeUndefined()
+    test('createShipsPlacement should return false if the creation of a new ship horizontally overlaps another ship', () => {
+        expect(gameboard.createShipsPlacement([1, 'A'], 'battleship', 'horizontal')).toBeFalsy()
     })
 
     test('determine if an attack has hit or missed a ship', () => {
@@ -35,8 +35,8 @@ describe('test vertical placements of ships', () => {
         expect(gameboard.ship.carrier).toEqual([new Ship(5), [[1, 'A'], [1, 'B'], [1, 'C'], [1, 'D'], [1, 'E']]])
     });
 
-    test('createShipsPlacement should return undefined if the creation of a new ship vertically overlaps another ship', () => {
-        expect(gameboard.createShipsPlacement([1, 'A'], 'battleship')).toBeUndefined()
+    test('createShipsPlacement should return false if the creation of a new ship vertically overlaps another ship', () => {
+        expect(gameboard.createShipsPlacement([1, 'A'], 'battleship')).toBeFalsy()
     })
 
     test('determine if an attack has hit or missed a ship', () => {

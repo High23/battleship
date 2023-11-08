@@ -6,25 +6,37 @@ export default class Gameboard {
         this.yAxis = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
         this.ship = {}
         this.missedShots = []
+        this.hits = []
     }
 
     receiveAttack(attackCoords) {
         if (!this.xAxis.includes(attackCoords[0]) && !this.yAxis.includes(attackCoords[1]))
             throw new Error('The attack coordinates are not within the gameboard')
+        if (this.missedShots.length > 0) {
+            for (let i = 0; i < this.missedShots.length; i++) {
+                if (this.missedShots[i][0] === attackCoords[0] && this.missedShots[i][1] === attackCoords[1]) {
+                    return 'already missed'
+                }
+            }
+        }
+        if (this.hits.length > 0) {
+            for (let i = 0; i < this.hits.length; i++) {
+                if (this.hits[i][0] === attackCoords[0] && this.hits[i][1] === attackCoords[1]) {
+                    return 'already hit'
+                }
+            }
+        }
         const shipObjKeys = Object.keys(this.ship)
         for (let i = 0; i < shipObjKeys.length; i++) {
             const shipType = shipObjKeys[i]
             const shipPlacement = this.ship[[shipType]][1]
             for (let j = 0; j < shipPlacement.length; j++) {
-                if (this.missedShots.length > 0) {
-                    if (this.missedShots[j][0] === attackCoords[0] && this.missedShots[j][1] === attackCoords[1]) {
-                        return
-                    }
-                } else if (shipPlacement[j][0] === attackCoords[0] && shipPlacement[j][1] === attackCoords[1]) {
-                    if (this.ship[[shipType]][0].sunk) return;
+                if (shipPlacement[j][0] === attackCoords[0] && shipPlacement[j][1] === attackCoords[1]) {
+                    if (this.ship[[shipType]][0].sunk) return 'sunk';
                     this.ship[[shipType]][0].hit()
                     this.ship[[shipType]][0].isSunk()
-                    return;
+                    this.hits.push(attackCoords)
+                    return true;
                 }
             }
         }
@@ -47,31 +59,30 @@ export default class Gameboard {
             throw new Error('Ship type is not valid')
         }
         const boardPlacement = [coords]
-        for (let i = 1; i < shipObj.length; i ++) {
-            if (this.checkIfShipPlacementOverlapsAnyOtherShip(boardPlacement[i - 1]) === true) return;
+        for (let i = 1; i < shipObj.length; i++) {
             if (direction === 'vertical') {
-                boardPlacement.push([coords[0], this.yAxis[this.yAxis.indexOf(coords[1]) + i]])
+                boardPlacement.push([coords[0], String.fromCharCode(coords[1].toString().charCodeAt(0) + i)])
             } else {
-                boardPlacement.push([this.xAxis[this.xAxis.indexOf(coords[0])] + i, coords[1]])
+                boardPlacement.push([coords[0] + i , coords[1]])
             }
+        }
+        for (let i = 0; i < boardPlacement.length; i++) {
+            if (this.checkIfShipPlacementOverlapsAnyOtherShip(boardPlacement[i]) === true) return false;
         }
         if (this.checkIfShipPlacementInGameBoard(boardPlacement)) {
             this.ship[[shipType]] = [shipObj, boardPlacement]
+        } else {
+            return 'invalid'
         }
     }
 
     checkIfShipPlacementInGameBoard(boardPlacement) {
-        const queue = [boardPlacement[0]]
-        let i = 0;
-        while (queue >= 0) {
-            if (!this.xAxis.includes(queue[0][0]) || !this.yAxis.includes(queue[0][1])) {
+        for (let i = 0; i < boardPlacement.length; i++) {
+            if (!this.xAxis.includes(boardPlacement[i][0]) || !this.yAxis.includes(boardPlacement[i][1])) {
                 return false;
             }
-            i++
-            queue.shift()
-            queue.push(boardPlacement[i])
         }
-        return true;
+        return true
     }
 
     checkIfShipPlacementOverlapsAnyOtherShip(placementVertex) {

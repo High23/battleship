@@ -83,6 +83,14 @@ html, body {
     background-color: green;
 }
 
-.gameboard-square:hover {
-    background-color: green;
+.missed {
+    background-color: blue;
+}
+
+.hit {
+    background-color: red;
+}
+
+.ai-gameboard-square + .hover-color {
+    background-color: rgba(141, 135, 141, 0.315);
 }
