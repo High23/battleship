@@ -1,14 +1,14 @@
-import { initShip, startGame, playerAttack } from './gameloop';
+import { initShip, startGame, playerAttack, resetGameStuff } from './gameloop';
 import './style.css'
 
-export {createPlayerBoard, createAiBoard, addAiBoardListeners, markMissedShot, markHit, removeAiBoardListeners, announceWinner, adjustDisplay}
+export {createPlayerBoard, createAiBoard, addAiBoardListeners, markMissedShot, markHit, removeAiBoardListeners, announceWinner, displayGameEvents}
 
 const yAxis = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
 
 let shipTypes = [ 'patrolBoat', 'submarine', 'destroyer', 'battleship', 'carrier' ]
 let shipLength = 5;
 let shipDirection = 'vertical';
-const rotateBTN = document.querySelector('.rotate');
+let rotateBTN = document.querySelector('.rotate');
 rotateBTN.addEventListener('click', () => {
     if (shipDirection === 'horizontal') {
         shipDirection = 'vertical';
@@ -18,7 +18,9 @@ rotateBTN.addEventListener('click', () => {
 })
 
 function createPlayerBoard() {
-    const gameboard = document.querySelector('.player-gameboard');
+    const gameboardContainer = document.querySelector('.gameboard-container')
+    const gameboard = document.createElement('div')
+    gameboard.classList.add('player-gameboard')
     for (let i = 0; i < 10; i++) {
         for (let j = 1; j < 11; j++) {
             const gameboardSquare = document.createElement('div');
@@ -27,6 +29,7 @@ function createPlayerBoard() {
             gameboard.appendChild(gameboardSquare);
         }
     }
+    gameboardContainer.appendChild(gameboard)
     addPlayerBoardListeners()
 }
 
@@ -55,10 +58,10 @@ function addPlayerBoardListeners() {
 }
 
 let hovered = [];
-let placement = []
+let placement = [];
 
 function mouseHover() {
-    this.classList.add('ship-placement')
+    this.classList.add('hover-placement')
     hovered.push(this)
     let coords = this.dataset.squareVertex.split("")
     const gameboardSquares = document.querySelectorAll('.gameboard-square')
@@ -78,14 +81,14 @@ function mouseHover() {
             siblingCoords = gameboardSquareElementSibling.dataset.squareVertex.split("")
             if (siblingCoords[siblingCoords.length - 1] === coords[coords.length - 1]) {
                 hovered.push(gameboardSquareElementSibling)
-                gameboardSquareElementSibling.classList.add('ship-placement')
+                if (gameboardSquareElementSibling.classList[1] !== 'ship-placement') gameboardSquareElementSibling.classList.add('hover-placement')
                 gameboardSquareElementSibling = gameboardSquareElementSibling.nextSibling
             }
         } else if (shipDirection === 'vertical') {
             let verticalSiblingIndex = i + (10 * (j + 1))
-            if (verticalSiblingIndex < 100) {
+            if (verticalSiblingIndex < 100 && gameboardSquares[verticalSiblingIndex].classList[1] !== 'ship-placement') {
                 hovered.push(gameboardSquares[verticalSiblingIndex])
-                gameboardSquares[verticalSiblingIndex].classList.add('ship-placement')
+                gameboardSquares[verticalSiblingIndex].classList.add('hover-placement')
             }
         }
     }
@@ -93,13 +96,13 @@ function mouseHover() {
 
 function removeSquareHighlights() {
     hovered.forEach(element => {
-        element.classList.remove('ship-placement')
+        element.classList.remove('hover-placement')
     })
     hovered = []
 }
 
 let ship = shipTypes.length - 1
-const displayShipName = document.querySelector('.ship-type')
+let displayShipName = document.querySelector('.ship-type')
 let shipName = shipTypes[ship].split('')
 shipName[0] = shipName[0].toUpperCase()
 shipName = shipName.join('')
@@ -135,7 +138,7 @@ function mouseClick() {
     showPlayerShips(placement[placement.length - 1])
     if (shipLength < 2) {
         removePlayerBoardListeners()
-        removeDisplay()
+        adjustDisplay()
         startGame()
     }
 }
@@ -245,14 +248,64 @@ function announceWinner(winnerName) {
     display.innerHTML = `The ${winnerName} is the winner!`
 }
 
-function removeDisplay() {
+function displayGameEvents(message) {
+    const display = document.querySelector('.display')
+    display.innerHTML = message
+}
+
+function adjustDisplay() {
     displayShipName.innerHTML = ''
     rotateBTN.remove()
     const display = document.querySelector('.display')
     display.innerHTML = 'Attack'
+    displayShipName.remove()
+    const buttonAndDisplay = document.querySelector('.btn-and-display')
+    const resetBTN = document.createElement('button')
+    resetBTN.type = 'reset'
+    resetBTN.classList.add('reset')
+    resetBTN.innerHTML = 'Reset Game'
+    buttonAndDisplay.appendChild(resetBTN)
+    resetBTN.addEventListener('click', () => {
+        deleteBoards()
+        createPlayerBoard()
+        resetGameStuff()
+        resetBTN.remove()
+        resetDomStuff()
+    });
 }
 
-function adjustDisplay(message) {
+function deleteBoards() {
+    const gameboard = document.querySelector('.player-gameboard');
+    gameboard.remove()
+    const aiGameboard = document.querySelector('.ai-gameboard');
+    aiGameboard.remove()
+}
+
+function resetDomStuff() {
+    const buttonAndDisplay = document.querySelector('.btn-and-display')
     const display = document.querySelector('.display')
-    display.innerHTML = message
+    display.innerHTML = 'Place your ships'
+    shipLength = 5;
+    shipDirection = 'vertical';
+    rotateBTN = document.createElement('button')
+    rotateBTN.classList.add('rotate')
+    rotateBTN.type = 'button'
+    rotateBTN.innerHTML = 'Rotate Ship'
+    buttonAndDisplay.appendChild(rotateBTN)
+    rotateBTN.addEventListener('click', () => {
+        if (shipDirection === 'horizontal') {
+            shipDirection = 'vertical';
+        } else {
+            shipDirection = 'horizontal';
+        }
+    })
+    placement = [];
+    ship = shipTypes.length - 1
+    shipName = shipTypes[ship].split('')
+    shipName[0] = shipName[0].toUpperCase()
+    shipName = shipName.join('')
+    displayShipName = document.createElement('span')
+    displayShipName.classList.add('ship-type')
+    displayShipName.innerHTML = shipName
+    buttonAndDisplay.appendChild(displayShipName)
 }
