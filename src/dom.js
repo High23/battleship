@@ -1,5 +1,5 @@
 import { initShip, startGame, playerAttack, resetGameStuff } from './gameloop';
-import './style.css';
+import '../dist/style.css';
 
 export {
     createPlayerBoard,

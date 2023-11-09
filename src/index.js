@@ -1,5 +1,5 @@
 import './ship';
-import './style.css';
+import '../dist/style.css';;
 import { createAiBoard, createPlayerBoard } from './dom';
 
 createPlayerBoard();
