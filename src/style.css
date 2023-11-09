@@ -41,7 +41,7 @@ html, body {
     font-size: 1.3rem;
 }
 
-.rotate {
+.rotate, .reset {
     font-size: 1.5rem;
     padding: 15px 25px;
     background-color: #475569;
@@ -50,7 +50,7 @@ html, body {
     border-radius: 8px;
 }
 
-.rotate:active {
+.rotate:active, .reset:active {
     background-color: #64748b;
 }
 
@@ -79,7 +79,7 @@ html, body {
     cursor: pointer;
 }
 
-.ship-placement {
+.ship-placement, .hover-placement {
     background-color: green;
 }
 
