@@ -1,7 +1,7 @@
-import { createAiBoard, addAiBoardListeners, markMissedShot, markHit, removeAiBoardListeners, announceWinner, adjustDisplay } from "./dom";
+import { createAiBoard, addAiBoardListeners, markMissedShot, markHit, removeAiBoardListeners, announceWinner, displayGameEvents } from "./dom";
 import { Ai, Player } from "./player";
 
-export { initShip, startGame, playerAttack }
+export { initShip, startGame, playerAttack, resetGameStuff }
 
 let player = new Player()
 let aiPlayer = new Ai()
@@ -46,13 +46,13 @@ function playerAttack(attackCoords) {
     let sunk = aiPlayer.gameboard.checkIfAllShipsSunk()
     if (attackStatus === true) {
         markHit(attackCoords, turn)
-        adjustDisplay("You have hit one of the ai's ship's")
+        displayGameEvents("You have hit one of the ai's ship's")
     } else if (attackStatus === 'sunk') {
-        adjustDisplay("You have sunk one of the ai's ship's")
+        displayGameEvents("You have sunk one of the ai's ship's")
         return
     } else {
         markMissedShot(missedShots[missedShots.length - 1], turn)
-        adjustDisplay('You missed an attack')
+        displayGameEvents('You missed an attack')
     }
     if (sunk) {
         announceWinner(turn)
@@ -78,16 +78,21 @@ function aiAttack() {
     let sunk = aiPlayer.gameboard.checkIfAllShipsSunk()
     if (attackStatus === true) {
         markHit(aiCoordsPick, turn)
-        adjustDisplay("The Ai has hit one of your ship's")
+        displayGameEvents("The ai has hit one of your ship's")
     } else if (attackStatus === 'sunk') {
-        adjustDisplay("The Ai has sunk one of your ship's")
+        displayGameEvents("The ai has sunk one of your ship's")
         return
     } else {
         markMissedShot(missedShots[missedShots.length - 1], turn)
-        adjustDisplay('The Ai has missed an attack')
+        displayGameEvents('The ai has missed an attack')
     }
     if (sunk) {
         announceWinner(turn)
         removeAiBoardListeners()
     }
+}
+
+function resetGameStuff() {
+    player = new Player()
+    aiPlayer = new Ai()
 }
