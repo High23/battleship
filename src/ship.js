@@ -4,7 +4,7 @@ export default class Ship {
         this.numOfTimesHit = 0;
         this.sunk = false;
     }
-    
+
     hit() {
         this.numOfTimesHit++;
     }

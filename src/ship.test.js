@@ -1,4 +1,4 @@
-import Ship from "./ship";
+import Ship from './ship';
 
 test('number of hits goes up when hit', () => {
     const carrier = new Ship(5);
